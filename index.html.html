@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>うんちスタンプラリー</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;900&display=swap">
+<style>
+:root{--bg:#eef3ee;--card:#fff;--ink:#5b3a26;--sub:#7d8a80;--line:#cfd9cf;--me:#8a4b2a;--fr:#3b79c4;--both:#2f7d5b;--sheet:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root:not([data-theme="light"]){color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c18;--card:#1f2822;--ink:#f0e2d4;--sub:#92a096;--line:#364239;--me:#c98657;--fr:#6aa6ee;--both:#4fb687;--sheet:#222c26}}
+:root[data-theme="dark"]{--bg:#161c18;--card:#1f2822;--ink:#f0e2d4;--sub:#92a096;--line:#364239;--me:#c98657;--fr:#6aa6ee;--both:#4fb687;--sheet:#222c26}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif;font-weight:500}
+main{max-width:520px;margin:0 auto;padding:16px 14px 60px}
+.tabs{display:flex;background:var(--card);border-radius:99px;padding:4px;margin-bottom:16px;border:2px solid var(--line)}
+.tabs button{flex:1;font:inherit;font-weight:900;font-size:14px;border:0;background:transparent;color:var(--sub);padding:9px;border-radius:99px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--bg)}
+.hero{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:16px 18px;margin-bottom:14px}
+.count{font-size:56px;font-weight:900;line-height:1;letter-spacing:-2px}
+.count small{font-size:22px;color:var(--sub);letter-spacing:0;margin-left:4px}
+.msg{margin:6px 0 12px;font-size:14px;color:var(--sub)}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--me);border-radius:99px;transition:width .5s}
+.map{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;background:var(--card);border:2px solid var(--line);border-radius:22px;padding:12px}
+.t{appearance:none;font:inherit;font-size:clamp(8px,2.6vw,11px);font-weight:900;letter-spacing:-.5px;color:var(--sub);background:transparent;border:1.5px dashed var(--line);border-radius:7px;aspect-ratio:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;min-width:0}
+.t.me{background:var(--me);border:1.5px solid var(--me);color:#fff}
+.t.fr{background:var(--fr);border:1.5px solid var(--fr);color:#fff}
+.t.both{background:var(--both);border:1.5px solid var(--both);color:#fff}
+.t.pop{animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(1.9) rotate(-12deg);opacity:.2}100%{transform:none;opacity:1}}
+.hint{font-size:12px;color:var(--sub);margin:10px 4px 14px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px}
+.chip{flex:none;font:inherit;font-weight:900;font-size:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:7px 14px;cursor:pointer}
+.chip.on{background:var(--fr);border-color:var(--fr);color:#fff}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:13px;font-weight:900;margin:4px 2px 12px}
+.legend span:before{content:"";display:inline-block;width:14px;height:14px;border-radius:5px;margin-right:6px;vertical-align:-2px;background:var(--c)}
+.legend span.n:before{background:transparent;border:1.5px dashed var(--sub)}
+.rank{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:6px 16px;margin-top:14px}
+.rk{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-weight:900}
+.rk:last-child{border:0}
+.rk .nm{width:5.5em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk .bar{flex:1}.rk .bar i{background:var(--fr)}.rk.me .bar i{background:var(--me)}
+.rk b{width:2.4em;text-align:right}
+.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:16px;margin-bottom:14px}
+.card h4{margin:0 0 8px;font-size:15px}
+.card p{margin:0 0 10px;font-size:13px;color:var(--sub);line-height:1.6}
+button.primary{font:inherit;font-weight:900;font-size:16px;border:0;border-radius:14px;padding:13px 18px;background:var(--both);color:#fff;cursor:pointer;width:100%;margin-bottom:8px}
+button.line{background:#06c755}
+button.ghost{background:var(--line);color:var(--ink)}
+.fadd{display:flex;gap:8px}.fadd input{margin:0}.fadd button{width:auto;flex:none;margin:0}
+.veil{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.veil.show{display:flex}
+.sheet{background:var(--sheet);width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom,0px))}
+.sheet h3{margin:0 0 6px;font-size:22px;font-weight:900}
+label{display:block;font-size:13px;color:var(--sub);margin:12px 0 5px}
+input{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:10px 12px}
+.seg{display:flex;background:var(--bg);border:2px solid var(--line);border-radius:99px;padding:3px;margin-bottom:10px}
+.seg button{flex:1;font:inherit;font-weight:900;font-size:14px;border:0;background:transparent;color:var(--sub);padding:9px;border-radius:99px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.row{display:flex;gap:10px;margin-top:18px}
+.row button{flex:1;font:inherit;font-weight:900;font-size:16px;border:0;border-radius:14px;padding:14px;cursor:pointer}
+.save{background:var(--both);color:#fff}.del{background:var(--line);color:var(--ink);flex:.6!important}.cancel{background:transparent;color:var(--sub);flex:.6!important}
+.toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:99px;font-weight:900;opacity:0;transition:.3s;pointer-events:none;z-index:60;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.intro{position:fixed;inset:0;z-index:50;background:#ffd84d;background-image:radial-gradient(#ffe98f 22%,transparent 23%);background-size:26px 26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:env(safe-area-inset-top,0px) 20px calc(28px + env(safe-area-inset-bottom,0px));overflow:hidden;color:#5b3a26;transition:opacity .4s,transform .4s}
+.intro.out{opacity:0;transform:scale(1.08);pointer-events:none}
+.intro svg{width:min(62vw,250px);height:auto;animation:bob 2.2s ease-in-out infinite;position:relative;z-index:2}
+@keyframes bob{50%{transform:translateY(-10px) rotate(2deg)}}
+.intro h2{margin:6px 0 0;text-align:center;font-weight:900;line-height:1.05;position:relative;z-index:2}
+.intro h2 span{display:block;font-size:clamp(46px,16vw,70px);color:#5b3a26;text-shadow:3px 3px 0 #fff,6px 6px 0 #ff6fa5}
+.intro h2 em{display:block;font-style:normal;font-size:clamp(24px,8vw,36px);color:#fff;-webkit-text-stroke:6px #5b3a26;paint-order:stroke fill;margin-top:4px}
+.intro p{margin:10px 0 18px;font-weight:900;font-size:15px;background:#fff;border-radius:99px;padding:6px 16px;position:relative;z-index:2}
+.intro .go{font:inherit;font-weight:900;font-size:26px;color:#fff;background:#ff4f8b;border:4px solid #5b3a26;border-radius:99px;padding:14px 56px;box-shadow:0 7px 0 #5b3a26;cursor:pointer;position:relative;z-index:2}
+.intro .go:active{transform:translateY(5px);box-shadow:0 2px 0 #5b3a26}
+.dc{position:absolute;font-weight:900;font-size:15px;color:#fff;border:3px solid #5b3a26;border-radius:12px;width:58px;height:58px;display:flex;align-items:center;justify-content:center;z-index:1}
+button:focus-visible,input:focus-visible{outline:3px solid var(--both);outline-offset:2px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){.t.pop{animation:none}.bar i{transition:none}.intro svg{animation:none}.intro{transition:none}}
+</style>
+</head>
+<body>
+<div class="intro" id="intro">
+<div class="dc" style="top:9%;left:6%;background:#ff6fa5;transform:rotate(-10deg)">北海道</div>
+<div class="dc" style="top:12%;right:7%;background:#3b9be0;transform:rotate(9deg)">東京</div>
+<div class="dc" style="top:40%;left:3%;background:#2fb67c;transform:rotate(7deg)">京都</div>
+<div class="dc" style="top:42%;right:4%;background:#ff8a3d;transform:rotate(-8deg)">大阪</div>
+<div class="dc" style="bottom:20%;left:9%;background:#9a6bd6;transform:rotate(-6deg)">福岡</div>
+<div class="dc" style="bottom:23%;right:8%;background:#ff6fa5;transform:rotate(8deg)">沖縄</div>
+<svg viewBox="0 0 300 290" aria-hidden="true"><g stroke="#5b3a26" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"><ellipse cx="150" cy="232" rx="108" ry="46" fill="#8a4b2a"/><ellipse cx="150" cy="176" rx="82" ry="38" fill="#9c5a35"/><ellipse cx="150" cy="126" rx="56" ry="32" fill="#ad6a42"/><path d="M112 112C128 72 152 64 152 30C190 50 196 92 188 112Z" fill="#be7a50"/></g><circle cx="122" cy="172" r="13" fill="#fff"/><circle cx="178" cy="172" r="13" fill="#fff"/><circle cx="125" cy="174" r="6.5" fill="#3b2314"/><circle cx="175" cy="174" r="6.5" fill="#3b2314"/><circle cx="127" cy="171" r="2.5" fill="#fff"/><circle cx="177" cy="171" r="2.5" fill="#fff"/><circle cx="100" cy="192" r="9" fill="#ff8fb1"/><circle cx="200" cy="192" r="9" fill="#ff8fb1"/><path d="M132 192Q150 214 168 192Z" fill="#a32f2f" stroke="#5b3a26" stroke-width="5" stroke-linejoin="round"/><g fill="#fff"><path d="M232 70l5 13 13 5-13 5-5 13-5-13-13-5 13-5z"/><path d="M64 96l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/></g></svg>
+<h2><span>うんち</span><em>スタンプラリー</em></h2>
+<p>47都道府県、ぜんぶ踏破しよう！</p>
+<button class="go" id="go">はじめる</button>
+</div>
+
+<main>
+<div class="tabs"><button id="tb1" class="on">マイ地図</button><button id="tb2">友だちと比べる</button></div>
+
+<div id="p1">
+<section class="hero">
+<div class="count"><span id="n">0</span><small>/ 47県</small></div>
+<p class="msg" id="msg"></p>
+<div class="bar"><i id="bar"></i></div>
+</section>
+<div class="map" id="map1"></div>
+<p class="hint">県をタップして、初めてした日を記録。位置は実際の地図を四角で並べたものです。</p>
+<button class="primary line" id="shImg">地図を画像で共有（LINEなど）</button>
+</div>
+
+<div id="p2" hidden>
+<div id="nameCard" class="card">
+<h4>まず名前を決める</h4>
+<p>友だちに表示される名前です。</p>
+<input id="nick" maxlength="8" placeholder="ニックネーム（8文字まで）" style="margin-bottom:10px">
+<button class="primary" id="nickSave">決定</button>
+</div>
+<div id="mine" class="card" hidden>
+<h4>自分のコードを友だちに送る</h4>
+<p>送った相手だけが、あなたの地図を見られます。記録が増えたら、もう一度送ると更新されます。</p>
+<button class="primary line" id="lineCode">LINEでコードを送る</button>
+<button class="primary ghost" id="copyCode">コードをコピー</button>
+</div>
+<div class="card">
+<h4>友だちのコードを追加</h4>
+<p>友だちから届いたリンクを開くか、コードをここに貼り付けます。</p>
+<div class="fadd"><input id="fcode" placeholder="コードを貼り付け"><button class="primary" id="fadd">追加</button></div>
+</div>
+<div id="cmp" hidden>
+<div class="chips" id="chips"></div>
+<div class="legend" id="legend"></div>
+<div class="map" id="map2"></div>
+<div class="rank" id="rank"></div>
+<button class="primary ghost" id="rmFr" style="margin-top:14px"></button>
+</div>
+</div>
+</main>
+
+<div class="veil" id="veil"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ttl">
+<h3 id="ttl"></h3>
+<label>初めてした日</label>
+<div class="seg"><button id="sd" class="on">日付を入れる</button><button id="su">日付は不明</button></div>
+<input type="date" id="d">
+<div class="row"><button class="cancel" id="cancel">閉じる</button><button class="del" id="del">取り消す</button><button class="save" id="save">スタンプを押す</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const P=[["北海道",11,0],["青森",11,2],["岩手",11,3],["宮城",11,4],["秋田",10,3],["山形",10,4],["福島",10,5],
+["茨城",10,7],["栃木",10,6],["群馬",9,6],["埼玉",9,7],["千葉",10,8],["東京",9,8],["神奈川",8,8],
+["新潟",9,5],["富山",8,5],["石川",7,5],["福井",6,6],["山梨",8,7],["長野",8,6],["岐阜",7,6],["静岡",7,8],["愛知",7,7],
+["三重",6,8],["滋賀",6,7],["京都",5,7],["大阪",4,8],["兵庫",4,7],["奈良",5,8],["和歌山",5,9],
+["鳥取",3,7],["島根",2,7],["岡山",3,8],["広島",2,8],["山口",1,8],["徳島",4,9],["香川",3,9],["愛媛",2,9],["高知",3,10],
+["福岡",1,9],["佐賀",0,9],["長崎",0,10],["熊本",1,10],["大分",2,10],["宮崎",2,11],["鹿児島",1,11],["沖縄",0,13]];
+const $=id=>document.getElementById(id);
+const KEY="unchi-rally-v3";
+let st={name:"",stamps:{},friends:[]};
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.stamps){st=s;st.friends=st.friends||[]}}catch(e){}
+function keep(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+const fullName=i=>P[i][0]+(P[i][0]==="東京"?"都":P[i][0]==="大阪"||P[i][0]==="京都"?"府":P[i][0]==="北海道"?"":"県");
+const today=()=>{const t=new Date();return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0")};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1900)}
+
+/* ビット列：47県のクリア状況を短いコードにする */
+function maskOf(s){let m=0n;for(const k in s)m|=1n<<BigInt(k);return m}
+function fromB36(s){let v=0n;for(const c of s){const d=parseInt(c,36);if(isNaN(d))return null;v=v*36n+BigInt(d)}return v}
+const has=(m,i)=>((m>>BigInt(i))&1n)===1n;
+const cnt=m=>{let c=0;for(let i=0;i<47;i++)if(has(m,i))c++;return c};
+const myCode=()=>st.name+":"+maskOf(st.stamps).toString(36);
+const myLink=()=>location.href.split("#")[0]+"#f="+encodeURIComponent(myCode());
+function parseCode(s){
+  s=String(s||"").trim();const m=s.match(/#f=(\S+)/);
+  if(m){try{s=decodeURIComponent(m[1])}catch(e){return null}}
+  const j=s.lastIndexOf(":");if(j<1)return null;
+  const name=s.slice(0,j).trim().slice(0,8),b=s.slice(j+1).trim().toLowerCase();
+  const v=fromB36(b);if(!name||!b||v===null||v>=(1n<<47n))return null;
+  return{name,b};
+}
+
+function buildMap(el,cls,onTap,pop){
+  el.innerHTML="";
+  P.forEach((p,i)=>{
+    const b=document.createElement("button");
+    b.className="t "+cls(i)+(i===pop?" pop":"");
+    b.textContent=p[0];
+    b.style.gridColumn=(p[1]+1)+(i===0?" / span 2":"");
+    b.style.gridRow=(p[2]+1)+(i===0?" / span 2":"");
+    if(i===0)b.style.aspectRatio="auto";
+    b.setAttribute("aria-label",fullName(i));
+    if(onTap)b.onclick=()=>onTap(i);
+    el.appendChild(b);
+  });
+}
+function renderMine(pop){
+  buildMap($("map1"),i=>st.stamps[i]?"me":"",openSheet,pop);
+  const n=Object.keys(st.stamps).length;
+  $("n").textContent=n;$("bar").style.width=(n/47*100)+"%";
+  $("msg").textContent=n===0?"最初の1県を埋めてみよう":n===47?"全国制覇！おめでとう！":"あと "+(47-n)+" 県で全国制覇";
+}
+
+/* 記録シート */
+let cur=null,unk=false;
+function setMode(dated){unk=!dated;$("sd").classList.toggle("on",dated);$("su").classList.toggle("on",!dated);$("d").hidden=!dated}
+function openSheet(i){
+  cur=i;const e=st.stamps[i];
+  $("ttl").textContent=fullName(i);
+  setMode(!(e&&e.date==="unknown"));$("d").value=e&&e.date!=="unknown"?e.date:today();
+  $("del").hidden=!e;$("save").textContent=e?"保存する":"スタンプを押す";
+  $("veil").classList.add("show");
+}
+const closeSheet=()=>$("veil").classList.remove("show");
+$("sd").onclick=()=>setMode(true);$("su").onclick=()=>setMode(false);
+$("cancel").onclick=closeSheet;
+$("veil").onclick=e=>{if(e.target===$("veil"))closeSheet()};
+$("save").onclick=()=>{
+  const fresh=!st.stamps[cur];
+  st.stamps[cur]={date:unk?"unknown":($("d").value||today())};
+  keep();closeSheet();renderMine(fresh?cur:null);
+  toast(fresh?fullName(cur)+"、クリア！":"保存しました");
+};
+$("del").onclick=()=>{
+  if(!confirm(fullName(cur)+"の記録を取り消しますか？"))return;
+  delete st.stamps[cur];keep();closeSheet();renderMine();toast("取り消しました");
+};
+
+/* タブ */
+function tab(n){
+  $("p1").hidden=n!==1;$("p2").hidden=n!==2;
+  $("tb1").classList.toggle("on",n===1);$("tb2").classList.toggle("on",n===2);
+  if(n===2)renderCmp();
+}
+$("tb1").onclick=()=>tab(1);$("tb2").onclick=()=>tab(2);
+
+/* 友だち比較 */
+let sel=null;
+$("nickSave").onclick=()=>{const v=$("nick").value.trim();if(!v)return;st.name=v;keep();renderCmp();toast("名前を決めました")};
+function shareLine(text){
+  const u="https://line.me/R/msg/text/?"+encodeURIComponent(text);
+  let w=null;try{w=window.open(u,"_blank")}catch(e){}
+  if(!w){if(navigator.share)navigator.share({text}).catch(()=>{});else toast("LINEを開けませんでした")}
+}
+$("lineCode").onclick=()=>shareLine("💩 うんちスタンプラリーの私の地図だよ！\nリンクを開くと追加できるよ\n"+myLink());
+$("copyCode").onclick=async()=>{try{await navigator.clipboard.writeText(myLink());toast("コピーしました")}catch(e){prompt("コピーしてください",myLink())}};
+function addFriend(f){
+  const i=st.friends.findIndex(x=>x.name===f.name);
+  if(i>=0)st.friends[i]=f;else st.friends.push(f);
+  sel=f.name;keep();
+}
+$("fadd").onclick=()=>{
+  const f=parseCode($("fcode").value);
+  if(!f){toast("コードを読み取れませんでした");return}
+  addFriend(f);$("fcode").value="";renderCmp();toast(f.name+"さんを追加しました");
+};
+$("rmFr").onclick=()=>{
+  if(!sel||!confirm(sel+"さんを削除しますか？"))return;
+  st.friends=st.friends.filter(x=>x.name!==sel);sel=null;keep();renderCmp();
+};
+function renderCmp(){
+  $("nameCard").hidden=!!st.name;$("mine").hidden=!st.name;
+  const fs=st.friends;
+  $("cmp").hidden=!fs.length;
+  if(!fs.length)return;
+  if(!sel||!fs.find(x=>x.name===sel))sel=fs[0].name;
+  const fr=fs.find(x=>x.name===sel),fm=fromB36(fr.b),mm=maskOf(st.stamps);
+  $("chips").innerHTML="";
+  fs.forEach(f=>{const b=document.createElement("button");b.className="chip"+(f.name===sel?" on":"");b.textContent=f.name;b.onclick=()=>{sel=f.name;renderCmp()};$("chips").appendChild(b)});
+  buildMap($("map2"),i=>{const a=has(mm,i),b=has(fm,i);return a&&b?"both":a?"me":b?"fr":""});
+  let both=0,om=0,of=0;
+  for(let i=0;i<47;i++){const a=has(mm,i),b=has(fm,i);if(a&&b)both++;else if(a)om++;else if(b)of++}
+  $("legend").innerHTML=`<span style="--c:var(--both)">ふたりとも行った ${both}</span><span style="--c:var(--me)">自分だけ ${om}</span><span style="--c:var(--fr)">${esc(fr.name)}だけ ${of}</span><span class="n">どちらもまだ ${47-both-om-of}</span>`;
+  const rows=[{name:(st.name||"自分"),c:cnt(mm),me:1},...fs.map(f=>({name:f.name,c:cnt(fromB36(f.b))}))].sort((a,b)=>b.c-a.c);
+  $("rank").innerHTML=rows.map(p=>`<div class="rk${p.me?" me":""}"><span class="nm">${esc(p.name)}${p.me?"（自分）":""}</span><div class="bar"><i style="width:${p.c/47*100}%"></i></div><b>${p.c}</b></div>`).join("");
+  $("rmFr").textContent=fr.name+"さんを削除";
+}
+
+/* 地図を画像にして共有 */
+function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+$("shImg").onclick=()=>{
+  const c=document.createElement("canvas"),W=750,H=1010,S=48,G=4;c.width=W;c.height=H;
+  const x=c.getContext("2d"),ox=(W-(13*(S+G)-G))/2,oy=250,F="'Zen Maru Gothic','Hiragino Maru Gothic ProN',sans-serif";
+  x.fillStyle="#eef3ee";x.fillRect(0,0,W,H);
+  x.textAlign="center";x.fillStyle="#5b3a26";
+  x.font="900 52px "+F;x.fillText("💩 うんちスタンプラリー",W/2,86);
+  x.font="900 96px "+F;x.fillText(Object.keys(st.stamps).length+" / 47県",W/2,196);
+  P.forEach((p,i)=>{
+    const a=ox+p[1]*(S+G),b=oy+p[2]*(S+G),w=i===0?2*S+G:S,on=!!st.stamps[i];
+    rr(x,a,b,w,w,9);
+    if(on){x.fillStyle="#8a4b2a";x.fill()}else{x.setLineDash([5,4]);x.lineWidth=2;x.strokeStyle="#b9c6ba";x.stroke();x.setLineDash([])}
+    x.fillStyle=on?"#fff":"#7d8a80";x.font="900 "+(i===0?22:14)+"px "+F;
+    x.fillText(p[0],a+w/2,b+w/2+(i===0?8:5));
+  });
+  c.toBlob(async blob=>{
+    if(!blob)return;
+    const f=new File([blob],"unchi-rally.png",{type:"image/png"});
+    try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}}catch(e){if(e&&e.name==="AbortError")return}
+    const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="unchi-rally.png";document.body.appendChild(a);a.click();a.remove();
+    toast("画像を保存しました");
+  },"image/png");
+};
+
+/* 起動 */
+let pending=null;
+if(location.hash.startsWith("#f=")){pending=parseCode(location.hash);try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}}
+$("go").onclick=()=>{
+  $("intro").classList.add("out");setTimeout(()=>$("intro").remove(),450);
+  if(pending){
+    if(confirm(pending.name+"さんの地図を追加しますか？")){addFriend(pending);tab(2);toast(pending.name+"さんを追加しました")}
+    pending=null;
+  }
+};
+renderMine();
+</script>
+</body>
+</html>
